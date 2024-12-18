@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -15,5 +15,8 @@ CONF = Settings()
 
 if __name__ == "__main__":
 	print(CONF)
+	import os
+	print(CONF.DATA_DIR)
+	print(os.path.exists(CONF.DATA_DIR))
 
 
