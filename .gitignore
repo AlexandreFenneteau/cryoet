@@ -7,3 +7,5 @@ data/
 .env
 viz_software
 __pycache__
+src/deprecated
+YOLOv11-pt

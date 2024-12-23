@@ -19,7 +19,7 @@ class TrainDataset(ABC):
                  patch_cache_size: int = 128,
                  n_patch_per_subject: int = 180):
 
-        self.input_folder = os.path.join(CONF.DATA_DIR, "preproc", "train")
+        self.input_folder = os.path.join(CONF.DATA_DIR, "preproc", "pytorch", "train")
         self.train_exps = train_exps
         self.val_exps = val_exps
         self.particle_types = particle_types

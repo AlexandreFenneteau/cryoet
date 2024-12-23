@@ -51,8 +51,8 @@ if __name__ == "__main__":
     # Create a sample 3D numpy array (e.g., a volumetric image)  
     # For demonstration, let's create a 3D array with random values  
     import torch
-    test_path = r"C:\Users\AlexandreFenneteau\Travail\perso\cryoet\data\preproc\train\TS_99_9_res-0_img.pt" 
-    msk_path = r"C:\Users\AlexandreFenneteau\Travail\perso\cryoet\data\preproc\train\TS_99_9_res-0_msk-all.pt" 
+    test_path = r"C:\Users\AlexandreFenneteau\Travail\perso\cryoet\data\preproc\pytorch\train\TS_5_4_res-0_img.pt" 
+    msk_path = r"C:\Users\AlexandreFenneteau\Travail\perso\cryoet\data\preproc\pytorch\train\TS_5_4_res-0_msk-all.pt" 
     volume_data = torch.load(test_path)
     msk_data = torch.load(msk_path)
   
