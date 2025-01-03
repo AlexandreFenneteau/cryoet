@@ -15,10 +15,10 @@ def parse_yaml(yaml_file):
     return data  
   
 # Function to read image and annotation files  
-def load_data(data, yaml_path):  
-    path = os.path.join(os.path.dirname(yaml_path), data['path'])
+def load_data(data, yaml_path, split):  
+    path = os.path.abspath(os.path.join(os.path.dirname(yaml_path), os.pardir, os.pardir, os.pardir, data['path']))
     classes = data['names']  
-    train_images_path = os.path.abspath(os.path.join(path, data['train']))
+    train_images_path = os.path.abspath(os.path.join(path, data[split]))
     train_labels_path = train_images_path.replace('images', 'labels')  
       
     # Gather image and label files  
@@ -48,7 +48,7 @@ def plot_image_with_boxes(image_path, label_path, class_names, ax):
             class_id = int(class_id)  
               
             # Convert normalized coordinates to absolute pixel values  
-            w, h, _ = image.shape  
+            h, w, _ = image.shape  
             x_center *= w  
             y_center *= h  
             width *= w  
@@ -72,10 +72,10 @@ def plot_image_with_boxes(image_path, label_path, class_names, ax):
     plt.draw()  
   
 # Main function to visualize images with a slider  
-def visualize_dataset(yaml_file):  
+def visualize_dataset(yaml_file, split: str = "train"):  
     # Parse YAML and load data  
     data = parse_yaml(yaml_file)  
-    images, labels, class_names = load_data(data, yaml_file)  
+    images, labels, class_names = load_data(data, yaml_file, split)  
       
     # Create figure and axis for display  
     fig, ax = plt.subplots()  
@@ -111,5 +111,7 @@ def visualize_dataset(yaml_file):
     plt.show()  
   
 # Example usage  
+#yaml_file = r'C:\Users\AlexandreFenneteau\Travail\perso\cryoet\data\preproc\yolo\coronal_data.yaml'  # Replace with the path to your YAML file  
 yaml_file = r'C:\Users\AlexandreFenneteau\Travail\perso\cryoet\data\preproc\yolo\axial_data.yaml'  # Replace with the path to your YAML file  
-visualize_dataset(yaml_file)  
+#yaml_file = r'C:\Users\AlexandreFenneteau\Travail\perso\cryoet\data\preproc\yolo\sagittal_data.yaml'  # Replace with the path to your YAML file  
+visualize_dataset(yaml_file, split="val")  
