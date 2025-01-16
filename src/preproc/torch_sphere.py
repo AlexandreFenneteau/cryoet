@@ -57,9 +57,3 @@ class TorchSphere(ABC):
 		position = np.array(position).reshape((-1,) + (1,) * n)
 		arr = np.linalg.norm(np.indices(shape) - position, axis=0)
 		cls.sphere_mask_dict[radius] = torch.tensor((arr < radius).astype(int))
-
-
-if __name__ == "__main__":
-	mt = torch.zeros((5, 5, 5), dtype=int)
-	TorchSphere.add_sphere(mt, 2, 4, (2, 2, 2))
-	print(mt)

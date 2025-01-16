@@ -20,6 +20,8 @@ class ImageSlicer:
         self.axial_index = self.z // 2  
         self.coronal_index = self.y // 2  
         self.sagittal_index = self.x // 2  
+
+        self.particle_cmps = ["spring", "summer", "autumn", "winter", "cool", "Wistia"]
   
         # Set up the figure and the axis  
         self.fig, self.ax = plt.subplots(1, 1)  
@@ -70,16 +72,28 @@ class ImageSlicer:
   
         if self.slicing_mode == "axial":  
             self.im = self.ax.imshow(self.volume[self.axial_index, :, :], cmap='gray')  
-            self.msk = self.ax.imshow(self.mask[self.axial_index, :, :], cmap='jet', alpha=0.2)  
+            if self.mask is not None:
+                img = torch.zeros(self.mask.shape[2:], dtype=int)
+                for label in range(self.mask.shape[0]):
+                    img[self.mask[label, self.axial_index]] = label + 1
+                self.msk = self.ax.imshow(img, cmap="jet", alpha=0.4)  
             self.ax.set_title('Axial [x, y]')  
         elif self.slicing_mode == "sagittal":  
             self.ax.set_title('Sagittal [z, y]')  
             self.im = self.ax.imshow(self.volume[:, :, self.sagittal_index], cmap='gray')  
-            self.msk = self.ax.imshow(self.mask[:, :, self.sagittal_index], cmap='jet', alpha=0.2)  
+            if not(self.mask is None):
+                img = torch.zeros((self.mask.shape[1], self.mask.shape[2]), dtype=int)
+                for label in range(self.mask.shape[0]):
+                    img[self.mask[label, :, :, self.sagittal_index]] = label + 1
+                self.msk = self.ax.imshow(img, cmap="jet", alpha=0.4)  
         elif self.slicing_mode == "coronal":  
-            self.im = self.ax.imshow(self.volume[:, self.coronal_index, :], cmap='gray')  
-            self.msk = self.ax.imshow(self.mask[:, self.coronal_index, :], cmap='jet', alpha=0.2)  
             self.ax.set_title('Coronal [z, x]')  
+            self.im = self.ax.imshow(self.volume[:, self.coronal_index, :], cmap='gray')  
+            if not(self.mask is None):
+                img = torch.zeros((self.mask.shape[1], self.mask.shape[3]), dtype=int)
+                for label in range(self.mask.shape[0]):
+                    img[self.mask[label, :, self.coronal_index, :]] = label + 1
+                self.msk = self.ax.imshow(img, cmap="jet", alpha=0.4)  
   
         self.fig.canvas.draw_idle()  
   
@@ -109,9 +123,13 @@ if __name__ == "__main__":
     # For demonstration, let's create a 3D array with random values  
     import torch
     test_path = r"C:\Users\AlexandreFenneteau\Travail\perso\cryoet\data\preproc\pytorch\train\TS_5_4_res-0_img.pt" 
-    msk_path = r"C:\Users\AlexandreFenneteau\Travail\perso\cryoet\data\preproc\pytorch\train\TS_5_4_res-0_msk-all.pt" 
+    msk_path = r"C:\Users\AlexandreFenneteau\Travail\perso\cryoet\data\preproc\pytorch\train\TS_5_4_res-0_msk.pt" 
+    #msk_path = None
     volume_data = torch.load(test_path)
-    msk_data = torch.load(msk_path)
+    if msk_path:
+        msk_data = torch.load(msk_path)
+    else:
+        msk_data = None
   
     # Initialize and run the image slicer  
-    slicer = ImageSlicer(volume_data, msk_data, slicing_mode="sagittal")  
+    slicer = ImageSlicer(volume_data, msk_data, slicing_mode="axial")  
