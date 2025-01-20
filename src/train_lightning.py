@@ -1,6 +1,6 @@
 import torch
-from dataset.Dataset import CZIIDataModule, TrainDataset
-from model.mpunext import LightningDenseMpunext
+from dataset.dataset import CZIIDataModule, TrainDataset
+from model.dense_mpunext import LightningDenseMpunext
 import lightning as L
 
 n_slices = 5
@@ -21,7 +21,8 @@ callbacks = [L.pytorch.callbacks.StochasticWeightAveraging(swa_lrs=1e-4, device=
 
 #train_datamodule = CZIIDataModule(batch_size=32, res='0', patch_size=(5, 32, 32), patch_cache_size=32, n_patch_per_subject=16)
 
-train_ds = TrainDataset(batch_size=128, res='0', patch_size=(5, 256+128, 256+128), patch_cache_size=256, n_patch_per_subject=128)
+train_ds = TrainDataset(r"C:\Users\AlexandreFenneteau\Travail\perso\cryoet\data\preproc\pytorch\train",
+                        batch_size=128, res='0', patch_size=(5, 256+128, 256+128), patch_cache_size=256, n_patch_per_subject=128)
 val_loader = train_ds.get_loader("val")
 train_loader = train_ds.get_loader("train")
 

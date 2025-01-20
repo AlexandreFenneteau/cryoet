@@ -7,10 +7,9 @@ import torchio as tio
 from torchio import Queue, Subject, ScalarImage, LabelMap, SubjectsDataset, SubjectsLoader, UniformSampler
 import lightning as L
 
-from config import CONF
-
 class TrainDataset(ABC):
     def __init__(self,
+                 pytorch_train_folder: str,
                  train_exps: List[str] = ["TS_5_4", "TS_6_6", "TS_69_2", "TS_86_3", "TS_99_9"],
                  val_exps: List[str] = ["TS_6_4", "TS_73_6"],
                  particle_types: List[str] = ['apo-ferritin', 'beta-galactosidase',
@@ -21,7 +20,8 @@ class TrainDataset(ABC):
                  patch_cache_size: int = 128,
                  n_patch_per_subject: int = 180):
 
-        self.input_folder = os.path.join(CONF.DATA_DIR, "preproc", "pytorch", "train")
+        #self.input_folder = os.path.join(CONF.DATA_DIR, "preproc", "pytorch", "train")
+        self.input_folder = pytorch_train_folder
         self.train_exps = train_exps
         self.val_exps = val_exps
         self.particle_types = particle_types
@@ -89,12 +89,14 @@ class TrainDataset(ABC):
 
 class CZIIDataModule(L.LightningDataModule):
     def __init__(self,
+                 pytorch_train_folder: str,
                  train_exps: List[str] = ["TS_5_4", "TS_6_6", "TS_69_2", "TS_86_3", "TS_99_9"],
                  val_exps: List[str] = ["TS_6_4", "TS_73_6"],
                  particle_types: List[str] = ['apo-ferritin', 'beta-galactosidase',
                                               'ribosome', 'thyroglobulin', 'virus-like-particle'],
                  batch_size=32, res='0', patch_size=(32, 32, 32), patch_cache_size=32, n_patch_per_subject=16):
         super().__init__()
+        self.pytorch_train_folder = pytorch_train_folder
         self.train_exps = train_exps
         self.val_exps = val_exps
         self.particle_types = particle_types
@@ -106,7 +108,8 @@ class CZIIDataModule(L.LightningDataModule):
 
     def prepare_data(self):
         # download only
-        self.train_dataset = TrainDataset(self.train_exps, self.val_exps,
+        self.train_dataset = TrainDataset(self.pytorch_train_folder,
+                                          self.train_exps, self.val_exps,
                                           self.particle_types, self.batch_size,
                                           self.res, self.patch_size, self.patch_cache_size,
                                           self.n_patch_per_subject)
@@ -125,7 +128,10 @@ class CZIIDataModule(L.LightningDataModule):
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
-    train_ds = TrainDataset(batch_size=32, res='0', patch_size=(32, 32, 32), patch_cache_size=32, n_patch_per_subject=16)
+    
+    train_ds = TrainDataset(r"C:\Users\AlexandreFenneteau\Travail\perso\cryoet\data\preproc\pytorch\train",
+                            batch_size=32, res='0', patch_size=(32, 32, 32),
+                            patch_cache_size=32, n_patch_per_subject=16)
     loader = train_ds.get_loader("val")
     i = 0
     for i, batch in enumerate(loader):
